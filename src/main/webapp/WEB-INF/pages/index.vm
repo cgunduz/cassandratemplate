@@ -1,0 +1,110 @@
+<html>
+<head>
+    <title>Example app</title>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+        google.load('visualization', '1.1', {packages: ['line']});
+        google.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            if($('#linechart_material').length)
+            {
+                var data = new google.visualization.DataTable();
+                data.addColumn('date', 'Date');
+                data.addColumn('number', 'Price');
+
+                var totalPrice = $('#productPriceSize').val();
+                var originalSite = $( ".productSite" )[0].value;
+                for(i = 0; i < $('#productPriceSize').val(); i++)
+                {
+                    if($( ".productSite" )[i].value == originalSite)
+                    {
+                        data.addRow(
+                                [new Date( $( ".productDate" )[i].value * 1000 ), $( ".productPrice" )[i].value * 100]
+                        );
+                    }
+                }
+
+                var options = {
+                    chart: {
+                        title: 'Date/Price',
+                        subtitle: 'Change in price in TL'
+                    },
+                    width: 900,
+                    height: 400,
+                    hAxis: {
+                        format: 'M/d/yy',
+                        gridlines: {count: 15}
+                    }
+                };
+
+                var chart = new google.charts.Line(document.getElementById('linechart_material'));
+
+                chart.draw(data, options);
+            }
+        }
+    </script>
+
+</head>
+<body>
+    <form id="queryProductForm" action="/queryProduct" >
+
+        <p>Sorry for the crappy ui & ux, not quite the front end guy</p>
+        <p>Example ids : 337962, 579783, 337949, 1017561, 1002906</p>
+
+        <table>
+            <tr>
+                <td>
+                    #springFormInput("product.id" "width=150px placeholder='Id' required=required")
+                    <button id="queryProductButton" type="submit" class="btn btn-primary">Query Product By Id</button>
+                </td>
+            </tr>
+            #if ($product.id != 0)
+            <tr>
+                <td>
+                    #springFormTextarea("product.title" "width=150px rows=4 placeholder='Title' disabled=true")
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    #springFormInput("product.brand" "width=150px placeholder='Brand' disabled=true")
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    #springFormInput("product.category" "width=150px placeholder='Category' disabled=true")
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    #springFormTextarea("product.url" "width=150px rows=4 placeholder='Url' disabled=true")
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    #springFormInput("product.siteName" "width=150px placeholder='Site' disabled=true")
+                </td>
+            </tr>
+            #end
+        </table>
+
+    </form>
+
+    <!-- Google charts -->
+    #if ($priceListShared)
+    <div id="linechart_material"></div>
+    <div id="priceInfoContainer">
+        #foreach($productPrice in $productPriceList)
+            <input style="visibility: hidden" class="productDate" value="$productPrice.timestamp"/>
+            <input style="visibility: hidden" class="productPrice" value="$productPrice.price"/>
+            <input style="visibility: hidden" class="productSite" value="$productPrice.siteId"/>
+        #end
+        <input style="visibility: hidden" id="productPriceSize" value="$productPriceList.size()"/>
+    </div>
+    #end
+
+</body>
+</html>
