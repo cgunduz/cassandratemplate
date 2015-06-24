@@ -16,17 +16,17 @@ import java.util.List;
 public class HomePageController {
 
 	@Autowired
-	ProductService productService;
+	private ProductService productService;
 
 	@Autowired
-	ProductPriceService productPriceService;
+	private ProductPriceService productPriceService;
 
 	@RequestMapping("/")
 	public String homepageInterceptor(ModelMap model) {
 
 		model.addAttribute("product", new Product());
 
-		return URI.HOMEPAGE;
+		return URI.HOMEPAGE.getAddress();
 	}
 
 
@@ -57,6 +57,6 @@ public class HomePageController {
 
 		model.addAttribute("product", product);
 
-		return URI.HOMEPAGE;
+		return URI.HOMEPAGE.getAddress();
 	}
 }
